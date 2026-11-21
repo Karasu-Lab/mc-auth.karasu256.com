@@ -24,6 +24,15 @@
     "ACCOUNTS_URL": "https://accounts.karasu256.com",
     "AUTH_API_URL": "https://api-auth.karasu256.com",
   },
+  "preview_urls": true,
+  "previews": {
+    "ratelimits": [{ "name": "VERIFY_RATE_LIMITER", "namespace_id": "1003", "simple": { "limit": 10, "period": 60 } }],
+    "vars": {
+      "APP_ENV": "preview",
+      "ACCOUNTS_URL": "https://dev.accounts.karasu256.com",
+      "AUTH_API_URL": "https://dev-api-auth.karasu256.com",
+    },
+  },
   "env": {
     "local": {
       "routes": [],

@@ -2,7 +2,7 @@ export {};
 
 declare global {
   interface Env {
-    APP_ENV: 'local' | 'production';
+    APP_ENV: 'local' | 'preview' | 'production';
     ACCOUNTS_URL: string;
     AUTH_API_URL: string;
     INTERNAL_API_SECRET: string;
