@@ -58,7 +58,6 @@
         "ACCOUNTS_URL": "http://localhost:3001",
         "AUTH_API_URL": "http://localhost:8790",
         "INTERNAL_API_SECRET": "local-development-internal-api-secret",
-        "CODE_HASH_SALT": "local-development-code-hash-salt",
       },
     },
   },

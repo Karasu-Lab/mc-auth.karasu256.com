@@ -69,7 +69,7 @@ export async function handleEvent(env: Env, request: Request) {
     if (!row || row.status !== 'pending' || !row.rawCode) throw new NotFoundError();
     await db
       .update(schema.mcAuthSession)
-      .set({ codeHash: await hashCode(row.rawCode, row.id, env.CODE_HASH_SALT), rawCode: null, status: 'kicked' })
+      .set({ codeHash: await hashCode(row.rawCode, row.id), rawCode: null, status: 'kicked' })
       .where(eq(schema.mcAuthSession.id, row.id));
   }
   return { ok: true, status: await buildStatus(env) };
@@ -94,7 +94,7 @@ export async function verifyChallenge(env: Env, request: Request, rawCode: strin
     .where(and(eq(schema.mcAuthSession.status, 'kicked'), gt(schema.mcAuthSession.expiresAt, new Date())));
   let matched: (typeof candidates)[number] | undefined;
   for (const row of candidates) {
-    if (row.codeHash === (await hashCode(code.data, row.id, env.CODE_HASH_SALT))) matched = row;
+    if (row.codeHash === (await hashCode(code.data, row.id))) matched = row;
   }
   if (!matched) throw new NotFoundError();
 
