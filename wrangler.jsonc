@@ -26,6 +26,13 @@
   },
   "preview_urls": true,
   "previews": {
+    "d1_databases": [
+      {
+        "binding": "MC_AUTH_DB",
+        "database_name": "mc-auth-preview",
+        "migrations_dir": "drizzle/migrations",
+      },
+    ],
     "ratelimits": [{ "name": "VERIFY_RATE_LIMITER", "namespace_id": "1003", "simple": { "limit": 10, "period": 60 } }],
     "vars": {
       "APP_ENV": "preview",
