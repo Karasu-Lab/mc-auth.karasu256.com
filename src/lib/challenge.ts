@@ -32,7 +32,10 @@ function parseJson(body: string): unknown {
 export async function createChallenge(env: Env, request: Request) {
   const parsed = challengeBodySchema.safeParse(parseJson(await readSignedBody(env, request)));
   if (!parsed.success) throw new BadRequestError();
+  return issueChallenge(env, parsed.data);
+}
 
+export async function issueChallenge(env: Env, data: z.infer<typeof challengeBodySchema>) {
   const db = drizzle(env.MC_AUTH_DB, { schema });
   const now = new Date();
   await db.delete(schema.mcAuthSession).where(lt(schema.mcAuthSession.expiresAt, now));
@@ -41,9 +44,9 @@ export async function createChallenge(env: Env, request: Request) {
   const code = generateCode();
   await db.insert(schema.mcAuthSession).values({
     id,
-    mcUuid: parsed.data.uuid.toLowerCase(),
-    mcName: parsed.data.name,
-    skin: parsed.data.skin ?? null,
+    mcUuid: data.uuid.toLowerCase(),
+    mcName: data.name,
+    skin: data.skin ?? null,
     rawCode: code,
     expiresAt: new Date(now.getTime() + 15 * 60 * 1000),
     createdAt: now,
@@ -54,9 +57,11 @@ export async function createChallenge(env: Env, request: Request) {
 export async function handleEvent(env: Env, request: Request) {
   const parsed = eventBodySchema.safeParse(parseJson(await readSignedBody(env, request)));
   if (!parsed.success) throw new BadRequestError();
+  return applyEvent(env, parsed.data);
+}
 
+export async function applyEvent(env: Env, event: z.infer<typeof eventBodySchema>) {
   const db = drizzle(env.MC_AUTH_DB, { schema });
-  const event = parsed.data;
   if (event.event === 'join') {
     await db
       .insert(schema.mcOnlinePlayer)

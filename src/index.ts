@@ -3,6 +3,7 @@ import { Elysia } from 'elysia';
 import { CloudflareAdapter } from 'elysia/adapter/cloudflare-worker';
 import { HttpError, UnauthorizedError } from '@karasu-lab/types/server';
 import { log } from '@karasu-lab/utils/server/log';
+import { handleConnection } from './connect';
 import { createChallenge, getProfile, handleEvent, verifyChallenge } from './lib/challenge';
 import { handlePreflight, withCors } from './lib/cors';
 import { fetchSession } from './lib/session';
@@ -42,4 +43,5 @@ export default {
     if (preflight) return preflight;
     return withCors(env, request, await app.fetch(request));
   },
+  connect: (socket: Socket): Promise<void> => handleConnection(env, socket),
 };
