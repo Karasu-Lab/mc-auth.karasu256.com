@@ -1,5 +1,3 @@
-import { createHash } from 'node:crypto';
-
 function signedHexDigest(digest: Buffer): string {
   const bytes = Buffer.from(digest);
   const negative = (bytes[0] & 0x80) !== 0;
@@ -42,10 +40,10 @@ export async function verifyJoin(
   sharedSecret: Buffer,
   publicKey: Buffer
 ): Promise<{ id: string; name: string; skin: string | null } | null> {
-  const serverHash = signedHexDigest(createHash('sha1').update(sharedSecret).update(publicKey).digest());
+  const digest = Buffer.from(await crypto.subtle.digest('SHA-1', Buffer.concat([sharedSecret, publicKey])));
   const url = new URL('https://sessionserver.mojang.com/session/minecraft/hasJoined');
   url.searchParams.set('username', name);
-  url.searchParams.set('serverId', serverHash);
+  url.searchParams.set('serverId', signedHexDigest(digest));
   const res = await fetch(url).catch(() => null);
   if (res?.status !== 200) return null;
   const profile = (await res.json()) as HasJoinedResponse;
