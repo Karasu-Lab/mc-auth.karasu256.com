@@ -10,7 +10,6 @@
       "invocation_logs": false,
     },
   },
-  "routes": [{ "pattern": "mc-auth.karasu256.com", "custom_domain": true }],
   "d1_databases": [
     {
       "binding": "MC_AUTH_DB",
@@ -44,7 +43,6 @@
   },
   "env": {
     "local": {
-      "routes": [],
       "d1_databases": [
         {
           "binding": "MC_AUTH_DB",
