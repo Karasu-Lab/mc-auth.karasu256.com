@@ -1,0 +1,29 @@
+{
+  "name": "mc-auth.karasu256.com",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "sh -c 'trap \"kill 0\" EXIT; MC_AUTH_URL=http://localhost:8793 INTERNAL_API_SECRET=local-development-internal-api-secret tsx src/gateway/index.ts & CLOUDFLARE_ENV=local vite dev --port 8793 --strictPort'",
+    "build": "tsc && vite build && wrangler deploy --dry-run",
+    "types": "wrangler types --env-interface Env",
+    "db:generate": "drizzle-kit generate"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.62.5",
+    "@types/node": "^26.6.4",
+    "drizzle-kit": "^0.31.4",
+    "tsx": "^4.23.15",
+    "typescript": "~7.0.2",
+    "vite": "^8.3.0",
+    "wrangler": "^4.147.0"
+  },
+  "dependencies": {
+    "@groundsgg/motd": "^0.4.0",
+    "@karasu-lab/types": "0.1.0-b9a53d3",
+    "@karasu-lab/utils": "0.1.0-11f53a9",
+    "drizzle-orm": "^0.45.4",
+    "elysia": "^1.4.29",
+    "zod": "^4.6.7"
+  }
+}
