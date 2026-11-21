@@ -15,6 +15,7 @@
     {
       "binding": "MC_AUTH_DB",
       "database_name": "mc-auth",
+      "database_id": "8d86a6bf-1608-4973-9404-e0f0c94f5029",
       "migrations_dir": "drizzle/migrations",
     },
   ],
@@ -30,6 +31,7 @@
       {
         "binding": "MC_AUTH_DB",
         "database_name": "mc-auth-preview",
+        "database_id": "132e8829-b774-4938-96c6-bf113384fdd3",
         "migrations_dir": "drizzle/migrations",
       },
     ],
