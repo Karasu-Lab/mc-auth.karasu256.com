@@ -1,0 +1,47 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "mc-auth-karasu256-com",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "logs": {
+      "enabled": true,
+      "invocation_logs": false,
+    },
+  },
+  "routes": [{ "pattern": "mc-auth.karasu256.com", "custom_domain": true }],
+  "d1_databases": [
+    {
+      "binding": "MC_AUTH_DB",
+      "database_name": "mc-auth",
+      "migrations_dir": "drizzle/migrations",
+    },
+  ],
+  "ratelimits": [{ "name": "VERIFY_RATE_LIMITER", "namespace_id": "1002", "simple": { "limit": 10, "period": 60 } }],
+  "vars": {
+    "APP_ENV": "production",
+    "ACCOUNTS_URL": "https://accounts.karasu256.com",
+    "AUTH_API_URL": "https://api-auth.karasu256.com",
+  },
+  "env": {
+    "local": {
+      "routes": [],
+      "d1_databases": [
+        {
+          "binding": "MC_AUTH_DB",
+          "database_name": "mc-auth",
+          "migrations_dir": "drizzle/migrations",
+        },
+      ],
+      "ratelimits": [{ "name": "VERIFY_RATE_LIMITER", "namespace_id": "1002", "simple": { "limit": 10, "period": 60 } }],
+      "vars": {
+        "APP_ENV": "local",
+        "ACCOUNTS_URL": "http://localhost:3001",
+        "AUTH_API_URL": "http://localhost:8790",
+        "INTERNAL_API_SECRET": "local-development-internal-api-secret",
+        "CODE_HASH_SALT": "local-development-code-hash-salt",
+      },
+    },
+  },
+}
