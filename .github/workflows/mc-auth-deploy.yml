@@ -5,48 +5,48 @@ on:
     branches: ["**"]
   workflow_dispatch:
 
+env:
+  IMAGE_NAME: ghcr.io/${{ github.repository }}
+
 jobs:
-  deploy:
-    if: github.ref_name == 'main'
-    environment: production
+  build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      packages: read
-    env:
-      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
-      INTERNAL_API_SECRET: ${{ secrets.INTERNAL_API_SECRET }}
-      NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@v4
-      - name: Apply D1 migrations
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_D1_API_TOKEN }}
-        run: npx --yes wrangler@4 d1 migrations apply MC_AUTH_DB --remote
-      - name: Deploy the worker
-        uses: Karasu-Lab/WorkersDeploy@v1
+      - name: Lowercase the image name
+        run: echo "IMAGE_NAME=${IMAGE_NAME,,}" >> "$GITHUB_ENV"
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
         with:
-          mode: production
-          worker-name: mc-auth-karasu256-com
-          secret-names: INTERNAL_API_SECRET
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: ${{ github.ref_name == 'main' }}
+          tags: |
+            ${{ env.IMAGE_NAME }}:latest
+            ${{ env.IMAGE_NAME }}:${{ github.sha }}
+          secrets: |
+            npm_token=${{ secrets.GITHUB_TOKEN }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-  preview:
-    if: github.ref_name != 'main'
-    environment: preview
+  deploy:
+    if: github.ref_name == 'main'
+    needs: build
+    environment: production
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      packages: read
-    env:
-      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
-      INTERNAL_API_SECRET: ${{ secrets.INTERNAL_API_SECRET }}
-      NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - name: Deploy the worker
-        uses: Karasu-Lab/WorkersDeploy@v1
-        with:
-          mode: preview
-          worker-name: mc-auth-karasu256-com
-          secret-names: INTERNAL_API_SECRET
+      - name: Deploy to Coolify
+        env:
+          COOLIFY_HOST: ${{ vars.COOLIFY_HOST }}
+          CI_DEPLOY_TOKEN: ${{ secrets.CI_DEPLOY_TOKEN }}
+        run: |
+          curl --fail --silent --show-error \
+            --header "Authorization: Bearer ${CI_DEPLOY_TOKEN}" \
+            "${COOLIFY_HOST%/}/api/v1/deploy?tag=mc-auth&force=true"
