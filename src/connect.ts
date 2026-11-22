@@ -1,7 +1,7 @@
 import { type Backend, Connection } from './gateway/connection';
 import { applyEvent, issueChallenge } from './lib/challenge';
 
-function createBackend(env: Env): Backend {
+export function createBackend(env: Env): Backend {
   return {
     async status() {
       return (await applyEvent(env, { event: 'status' })).status as Awaited<ReturnType<Backend['status']>>;
