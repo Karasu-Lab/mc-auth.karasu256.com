@@ -16,5 +16,5 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "worker-configuration.d.ts", "vite.config.ts", "drizzle.config.ts"]
+  "include": ["src", "worker-configuration.d.ts", "drizzle.config.ts"]
 }

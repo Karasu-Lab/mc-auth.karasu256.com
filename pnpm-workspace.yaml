@@ -1,6 +1,5 @@
 allowBuilds:
   esbuild: true
-  workerd: true
 overrides:
   esbuild: 0.28.2
   postcss: ^8.5.33
