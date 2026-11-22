@@ -51,7 +51,7 @@ jobs:
           COOLIFY_HOST: ${{ vars.COOLIFY_HOST }}
           CI_DEPLOY_TOKEN: ${{ secrets.CI_DEPLOY_TOKEN }}
         run: |
-          status=$(curl --silent --show-error --location --output response.json --write-out '%{http_code}' \
+          status=$(curl --silent --show-error --location --request POST --output response.json --write-out '%{http_code}' \
             --header "Authorization: Bearer ${CI_DEPLOY_TOKEN}" \
             --header "Accept: application/json" \
             "${COOLIFY_HOST%/}/api/v1/deploy?tag=mc-auth&force=true")
