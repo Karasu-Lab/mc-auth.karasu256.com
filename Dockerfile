@@ -16,4 +16,4 @@ COPY src ./src
 ENV NODE_ENV=production
 EXPOSE 25565
 
-CMD ["pnpm", "exec", "tsx", "src/gateway/index.ts"]
+CMD ["node_modules/.bin/tsx", "src/gateway/index.ts"]
