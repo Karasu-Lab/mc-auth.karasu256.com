@@ -14,6 +14,7 @@ COPY tsconfig.json ./
 COPY src ./src
 
 ENV NODE_ENV=production
-EXPOSE 25565
+ENV PORT=3000
+EXPOSE 3000 25565
 
 CMD ["node_modules/.bin/tsx", "src/gateway/index.ts"]
