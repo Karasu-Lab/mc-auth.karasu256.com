@@ -1,6 +1,6 @@
 FROM node:24-slim
 
-RUN corepack enable
+RUN npm install --global npm@latest corepack@latest && corepack enable
 
 WORKDIR /app
 
