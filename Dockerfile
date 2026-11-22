@@ -1,4 +1,4 @@
-FROM node:24-slim
+FROM node:24-slim AS build
 
 RUN npm install --global npm@latest corepack@latest && corepack enable
 
@@ -12,9 +12,24 @@ RUN --mount=type=secret,id=npm_token \
 
 COPY tsconfig.json ./
 COPY src ./src
+RUN node_modules/.bin/esbuild src/gateway/index.ts \
+  --bundle \
+  --platform=node \
+  --target=node24 \
+  --format=esm \
+  --banner:js="import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);" \
+  --outfile=dist/index.js
+
+FROM node:24-slim
+
+RUN npm install --global npm@latest corepack@latest
+
+WORKDIR /app
+
+COPY --from=build /app/dist/index.js ./index.js
 
 ENV NODE_ENV=production
 ENV PORT=3000
 EXPOSE 3000 25565
 
-CMD ["node_modules/.bin/tsx", "src/gateway/index.ts"]
+CMD ["node", "index.js"]
